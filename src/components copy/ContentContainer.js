@@ -4,9 +4,9 @@ import { BsPlusCircleFill } from 'react-icons/bs';
 
 const ContentContainer = () => {
   return (
-    <div className='content-container h-screen overflow-y-auto'>
+    <div className='content-container'>
       <TopNavigation />
-      <div className='ml-5 mt-20 mb-14'>
+      <div className='content-list'>
         <Post
           name='Ada'
           timestamp='one week ago'
@@ -76,18 +76,19 @@ const Post = ({ name, timestamp, text }) => {
 
   const seed = Math.round(Math.random() * 100);
   return (
-  <div className="chat chat-start mb-3">
-    <div className="chat-image">
-      <div className="w-10 rounded-full">
-        <img className='avatar-message' src={`https://avatars.dicebear.com/api/open-peeps/${seed}.svg`} />
+    <div className={'post'}>
+      <div className='avatar-wrapper'>
+        <img src={`https://avatars.dicebear.com/api/open-peeps/${seed}.svg`} alt='' className='avatar' />
+      </div>
+
+      <div className='post-content'>
+        <p className='post-owner'>
+          {name}
+          <small className='timestamp'>{timestamp}</small>
+        </p>
+        <p className='post-text'>{text}</p>
       </div>
     </div>
-    <div className="chat-header">
-      <b className='dark:text-gray-200'>{name}</b>
-      <time className="text-xs opacity-50 ml-2 dark:text-gray-100">{timestamp}</time>
-    </div>
-    <div className="chat-bubble dark:bg-gray-600">{text}</div>
-  </div>
   );
 };
 

@@ -8,14 +8,13 @@ const random = ['variants', 'plugins'];
 
 const ChannelBar = () => {
   return (
-    <div className='channel-bar shadow-lg h-screen overflow-auto'>
+    <div className='channel-bar shadow-lg'>
+      <ChannelBlock />
       <div className='channel-container'>
-        <ChannelBlock />
         <Dropdown header='Topics' selections={topics} />
         <Dropdown header='Questions' selections={questions} />
         <Dropdown header='Random' selections={random} />
       </div>
-      <UserBlock />
     </div>
   );
 };
@@ -60,19 +59,6 @@ const TopicSelection = ({ selection }) => (
 const ChannelBlock = () => (
   <div className='channel-block'>
     <h5 className='channel-block-text'>Channels</h5>
-  </div>
-);
-
-const UserBlock = () => (
-  <div className='user-block'>
-  <div className="avatar online">
-    <div className="w-24 rounded-full">
-      <img src="https://preview.redd.it/ogiglyr165p91.png?auto=webp&s=10efe64832620088452adccd502fc04b3eaac3e4" />
-    </div>
-  </div>
-
-  <h5 className='channel-block-text'>User</h5>
-
   </div>
 );
 

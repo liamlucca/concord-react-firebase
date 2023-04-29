@@ -34,12 +34,25 @@
   }
 
   .top-navigation {
-    @apply flex flex-row items-center justify-evenly 
-    bg-gray-300 dark:bg-gray-700 bg-opacity-90 
-    w-full h-16 
+    /*@apply flex flex-row items-center justify-normal
+  bg-gray-300 dark:bg-gray-700 bg-opacity-90 
+    max-w-full h-16 
     m-0 
-    shadow-lg;
+    shadow-lg
+    fixed z-10;*/
+
+    display: flex;
+    align-items: center;
+    padding: var(--navbar-padding, 0.5rem);
+    width: -webkit-fill-available;
+    position: fixed;
+    justify-content: space-between;
+    z-index: 10; 
   }
+  :where(.top-navigation > *) {
+    display: inline-flex;
+    align-items: center;
+}
 
   .top-navigation-icon {
     @apply text-gray-500
@@ -56,11 +69,11 @@
   .title-hashtag {
     @apply text-lg tracking-wider font-semibold text-gray-500 
     ml-2 my-auto;
-  }
+    }
 
   .title-text {
     @apply text-xl text-gray-500 tracking-wider font-semibold text-opacity-80 
-    mr-auto ml-2 my-auto 
+    ml-0 my-auto
     transition duration-300 ease-in-out;
   }
 
@@ -137,16 +150,25 @@
     cursor-pointer;
   }
 
+  .avatar-message {
+    @apply rounded-full aspect-square object-cover;
+  }
+
   .timestamp {
     @apply text-xs text-left font-semibold text-gray-500 dark:text-gray-600 ml-2;
   }
 
   .bottom-bar {
+
+    width: -webkit-fill-available;
+
     @apply flex flex-row items-center justify-between 
-    fixed left-80 right-8 bottom-2 
+    fixed bottom-2
     rounded-lg shadow-lg 
     bg-gray-400 dark:bg-gray-600 px-2
-    h-12;
+    h-12
+    ml-5
+    mr-7;
   }
 
   .bottom-bar-input {
@@ -158,12 +180,18 @@
   }
 
   .channel-bar {
-    @apply w-80 h-auto m-0 ml-16 bg-gray-200 dark:bg-gray-800
-     overflow-hidden;
+    @apply flex flex-col w-80 h-auto m-0 ml-16 bg-gray-200 dark:bg-gray-800
+     overflow-hidden
+     justify-between;
+  }
+
+  @media (max-width: 1024px) {
+
+
   }
 
   .channel-container {
-    @apply flex flex-col items-center justify-start 
+    @apply flex flex-col items-center justify-start
     p-1 m-0;
   }
 
@@ -177,6 +205,11 @@
     @apply text-lg tracking-wider font-bold 
     text-gray-600 dark:text-gray-400 
     mr-auto ml-4 my-auto align-middle;
+  }
+
+  .user-block {
+    @apply flex items-center justify-center 
+    m-5 mb-2 p-0;
   }
 
   .dropdown {
