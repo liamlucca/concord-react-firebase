@@ -3,8 +3,8 @@ import { FaFire, FaPoo } from 'react-icons/fa';
 
 const SideBar = () => {
   return (
-    <div className="fixed top-0 left-0 h-screen w-16 flex flex-col
-                  bg-white dark:bg-gray-900 shadow-lg z-10">
+    <div className="left-side fixed top-0 left-0 h-screen w-16 hidden sm:flex flex-col
+                  bg-white dark:bg-gray-900 shadow-lg z-10 overflow-y-auto overflow-x-hidden">
                     
         <SideBarIcon icon={<FaFire size="28" />} />
         <Divider />
@@ -18,7 +18,7 @@ const SideBar = () => {
 };
 
 const SideBarIcon = ({ icon, text = 'tooltip 💡' }) => (
-  <div className="sidebar-icon group">
+  <div className="sidebar-icon group min-h-12">
     {icon}
     <span class="sidebar-tooltip group-hover:scale-100">
       {text}

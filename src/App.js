@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import SideBar from './components/SideBar';
+import Sidebar from './components/Sidebar';
 import ChannelBar from './components/ChannelBar';
 import ContentContainer from './components/ContentContainer';
 import TopNavigation from './components/TopNavigation';
@@ -10,7 +10,7 @@ import TopNavigation from './components/TopNavigation';
 function App() {
   return (
     <div className="flex">
-      <SideBar />
+      <Sidebar />
       <ChannelBar />
       <ContentContainer />
     </div>

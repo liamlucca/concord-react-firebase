@@ -185,11 +185,6 @@
      justify-between;
   }
 
-  @media (max-width: 1024px) {
-
-
-  }
-
   .channel-container {
     @apply flex flex-col items-center justify-start
     p-1 m-0;
@@ -257,4 +252,8 @@
 
 ::-webkit-scrollbar-thumb {
   @apply bg-gray-500 dark:bg-green-400;
+}
+
+.left-side-menu-active {
+  @apply flex;
 }

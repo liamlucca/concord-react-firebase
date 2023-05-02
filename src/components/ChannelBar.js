@@ -8,7 +8,7 @@ const random = ['variants', 'plugins'];
 
 const ChannelBar = () => {
   return (
-    <div className='channel-bar shadow-lg h-screen overflow-auto'>
+    <div className='left-side channel-bar shadow-lg h-screen overflow-auto hidden sm:flex'>
       <div className='channel-container'>
         <ChannelBlock />
         <Dropdown header='Topics' selections={topics} />

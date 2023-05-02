@@ -4,7 +4,7 @@ import { BsPlusCircleFill } from 'react-icons/bs';
 
 const ContentContainer = () => {
   return (
-    <div className='content-container h-screen overflow-y-auto'>
+    <div className='content-container h-screen overflow-y-auto  '>
       <TopNavigation />
       <div className='ml-5 mt-20 mb-14'>
         <Post
