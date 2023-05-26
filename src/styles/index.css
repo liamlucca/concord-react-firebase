@@ -176,7 +176,7 @@
     bg-transparent outline-none 
     ml-0 mr-auto
     text-gray-500  dark:text-gray-400 placeholder-gray-500
-    cursor-text;
+    /*cursor-text;*/
   }
 
   .channel-bar {

@@ -1,8 +1,10 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "../../firebase";
+import { auth, db, app } from "../../firebase";
 import {
+  doc,
+  setDoc,
   addDoc,
   serverTimestamp,
   query,
@@ -14,53 +16,58 @@ import {
 
 import TopNavigation from './TopNavigation';
 import { BsPlusCircleFill } from 'react-icons/bs';
+import { act } from "react-dom/test-utils";
 
-const ContentContainer = () => {
-
+/*----------CHAT, INPUT Y NAVBAR (TopNavigation) -----------*/
+const ContentContainer = ({activeChannel}) => {
   const [messages, setMessages] = useState([]);
   const scroll = useRef();
 
   useEffect(() => {
+    //Buscamos los mensajes en la ruta y los ordenamos por la fecha
     const q = query(
-      collection(db, "messages"),
-      orderBy("createdAt"),
-      limit(50)
-    );
-
+      collection(db, `channels/${activeChannel}/messages`), 
+      orderBy("createdAt")
+    );            
+    //  
     const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+      //Mensajes
       let messages = [];
       QuerySnapshot.forEach((doc) => {
         messages.push({ ...doc.data(), id: doc.id });
       });
       setMessages(messages);
+      //Scrollear para abajo
+      scroll.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
     });
     return () => unsubscribe;
-  }, []);
+  }, [activeChannel]);
 
 
   return (
     <div className='content-container h-screen overflow-y-auto '>
-      <TopNavigation />
+      <TopNavigation channelName={activeChannel} />
       <div className='ml-5 mt-20 mb-14'>
 
       {/*----------MENSAJES----------*/}
       {messages?.map((message) => (
-          <Post key={message.id} message={message} />
+          <Message message={message} />
         ))}
       {/*-----------------------------*/}
 
       </div>
       <span ref={scroll}></span>
-      <SendMessageBar />
+      <SendMessageBar scroll={scroll} channelName={activeChannel} />
     </div>
   );
 };
 
 /*---------------INPUT PARA ENVIAR MENSAJES----------------*/
 
-const SendMessageBar = ({ scroll }) => {
+const SendMessageBar = ({ scroll, channelName }) => {
   const [message, setMessage] = useState("");
 
+  //Funcion
   const sendMessage = async (event) => {
     event.preventDefault();
 
@@ -70,17 +77,26 @@ const SendMessageBar = ({ scroll }) => {
       return;
     }
 
-    //consigue los datos del usuario logueado (id, nombre, foto)
+    //Consigue los datos del usuario logueado (id, nombre, foto)
     const { uid, displayName, photoURL } = auth.currentUser;
-    await addDoc(collection(db, "messages"), {
+
+    //Fecha de creación del mensaje
+    const date = new Date().getTime();
+
+    //Establecer la ruta del mensaje a una variable
+    const docRef = doc(db, `channels/${channelName}/messages/${date}`);
+
+    //Setear documento (mensaje) en la base de datos (firestore)
+    setDoc(docRef, {
       text: message,
       name: displayName,
       avatar: photoURL,
       createdAt: serverTimestamp(),
-      uid,
-    });
+      id: date,
+    })
+
+    //vaciar el input
     setMessage("");
-    scroll.current.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -88,11 +104,12 @@ const SendMessageBar = ({ scroll }) => {
     <PlusIcon />
     <form onSubmit={(event) => sendMessage(event)} className="w-full">
       <input
+        disabled = {channelName ? false : true}
         id="messageInput"
         name="messageInput"
         type="text"
         className='bottom-bar-input'
-        placeholder="type message..."
+        placeholder={`Enviar mensaje a #${channelName}`}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
@@ -105,7 +122,7 @@ const SendMessageBar = ({ scroll }) => {
 
 /*----------------MENSAJE----------------*/
 
-const Post = ({ message }) => {
+const Message = ({ message }) => {
 
   const [user] = useAuthState(auth);
 
@@ -120,7 +137,7 @@ const Post = ({ message }) => {
       <b className='dark:text-gray-200'>{message.name}</b>
       <time className="text-xs opacity-50 ml-2 dark:text-gray-100">{message.serverTimestamp}</time>
     </div>
-    <div className="chat-bubble dark:bg-gray-600">{message.text}</div>
+    <div className="chat-bubble dark:bg-gray-600 break-words text-start">{message.text}</div>
   </div>
   );
 };

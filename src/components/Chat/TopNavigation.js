@@ -12,14 +12,14 @@ import {
   import useDarkMode from '../../hooks/useDarkMode';
 import { useState, useEffect } from 'react';
   
-  const TopNavigation = () => {
+  const TopNavigation = ({channelName}) => {
     return (
     <div className="top-navigation bg-base-100 dark:bg-gray-800">
       <div className="w-screen">
         <label tabIndex={0} className=""> {/*esto antes era: sm:hidden */}
           <LeftMenuIcon />
         </label>
-        <a className="btn btn-ghost normal-case text-xl"><Title /></a>
+        <a className="btn btn-ghost normal-case text-xl"><Title text={channelName} /></a>
         <div className="dropdown p-0 flex flex-row-reverse mr-5">
           <label tabIndex={0} className="btn btn-ghost lg:hidden">
             <RightMenuIcon />
@@ -115,7 +115,7 @@ import { useState, useEffect } from 'react';
   const BellIcon = () => <span><FaRegBell size='24' className='top-navigation-icon' /></span>;
   const UserCircle = () => <span><FaUserCircle size='24' className='top-navigation-icon' /></span>;
   const HashtagIcon = () => <span><FaHashtag size='20' className='top-navigation-icon' /></span>;
-  const Title = () => <h5 className='title-text'>tailwind-css</h5>;
+  const Title = ({text}) => <h5 className='title-text'>{text}</h5>;
   
   export default TopNavigation;
   

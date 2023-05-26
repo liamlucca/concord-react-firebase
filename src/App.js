@@ -3,7 +3,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import "./styles/App.css";
 import Welcome from "./components/Welcome";
 
-import Chat from "./Chat";
+import Chat from "./components/Chat";
+import { useState } from "react";
 
 
 function App() {
