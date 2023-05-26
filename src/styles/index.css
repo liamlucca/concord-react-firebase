@@ -254,6 +254,15 @@
   @apply bg-gray-500 dark:bg-green-400;
 }
 
-.left-side-menu-active {
-  @apply flex;
+.left-side-menu-visually {
+  @apply m-0 w-0 transition-all duration-500;
+    font-size: 0;
 }
+
+@media (max-width: 640px) {
+  .left-side {
+    
+  }
+}
+
+

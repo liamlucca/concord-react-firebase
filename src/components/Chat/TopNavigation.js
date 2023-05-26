@@ -9,14 +9,14 @@ import {
     FaAngleLeft,
     FaAlignRight,
   } from 'react-icons/fa';
-  import useDarkMode from '../hooks/useDarkMode';
-import { useState } from 'react';
+  import useDarkMode from '../../hooks/useDarkMode';
+import { useState, useEffect } from 'react';
   
   const TopNavigation = () => {
     return (
     <div className="top-navigation bg-base-100 dark:bg-gray-800">
       <div className="w-screen">
-        <label tabIndex={0} className="sm:hidden">
+        <label tabIndex={0} className=""> {/*esto antes era: sm:hidden */}
           <LeftMenuIcon />
         </label>
         <a className="btn btn-ghost normal-case text-xl"><Title /></a>
@@ -64,24 +64,53 @@ import { useState } from 'react';
   );
 
   const LeftMenuIcon = () => {
-     const [enabled, setEnabled] = useState(false);    
-     const handleClick = () => {
-      const sideElements = document.getElementsByClassName('left-side');
-      Array.from(sideElements).forEach(element => {
-        element.classList.toggle("left-side-menu-active")
-      });
-      setEnabled(!enabled);
+     const [isHide, setIsHide] = useState(true);    
+     const sideElements = document.getElementsByClassName('left-side');
+     //Mostrar los menus izquierdos
+     const enable = () => {
+      Array.from(sideElements).forEach(element => { element.classList.add("flex", "transition-all", "duration-500")});
+      setTimeout(function () { Array.from(sideElements).forEach(element => { element.classList.remove("left-side-menu-visually")}); }, 1);
+      setTimeout(function () { Array.from(sideElements).forEach(element => { element.classList.remove("flex", "transition-all", "duration-500")}); }, 500);
+    };
+    //Esconder los menus izquierdos
+    const disable = () => {
+      setTimeout(function () {
+        Array.from(sideElements).forEach(element => { element.classList.remove("flex", "transition-all", "duration-500")});
+      }, 500);
+      Array.from(sideElements).forEach(element => { element.classList.add("left-side-menu-visually")});
+    }
+    //Al cliquear el boton:
+    const handleClick = () => 
+    {
+      setIsHide(!isHide);
+      isHide ? disable() : enable() ;  
     }; 
-    return (
-      <span onClick={handleClick}>{enabled ? (
-        <FaAngleLeft size='24' className='top-navigation-icon'/>
-      ) : (
-        <FaAngleRight size='24' className='top-navigation-icon'/>
-      )}
-      </span>
-    );
+    //Responsive
+    /*useEffect(() => {
+      function handleResize() {
+        if (window.innerWidth < 640) {
+          setIsHide(true);
+          disable();  
+          return (Button());
+        } 
+      }
+      handleResize();
+      window.addEventListener("resize", handleResize);
+      });*/
+    //Función a retornar del boton
+    const Button = () => {
+      return (
+        <span onClick={handleClick}>{isHide ? (
+          <FaAngleLeft size='24' className='top-navigation-icon'/>
+        ) : (
+          <FaAngleRight size='24' className='top-navigation-icon'/>
+        )}
+        </span>
+      )
+    }
+    //Retornar
+    return (Button());
 }
-
   const RightMenuIcon = () => <span><FaAlignRight size='24' className='top-navigation-icon'/></span>
   const BellIcon = () => <span><FaRegBell size='24' className='top-navigation-icon' /></span>;
   const UserCircle = () => <span><FaUserCircle size='24' className='top-navigation-icon' /></span>;

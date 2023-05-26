@@ -2,20 +2,27 @@ import { useState } from 'react';
 import { BsHash } from 'react-icons/bs';
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 
+import { auth, db } from "../../firebase";
+
+
 const topics = ['tailwind-css', 'react'];
 const questions = ['jit-compilation', 'purge-files', 'dark-mode'];
 const random = ['variants', 'plugins'];
 
+
 const ChannelBar = () => {
+
+  const { uid, displayName, photoURL } = auth.currentUser;
+
   return (
-    <div className='left-side channel-bar shadow-lg h-screen overflow-auto hidden sm:flex'>
+    <div className='left-side channel-bar shadow-lg h-screen overflow-auto overflow-x-hidden sm:flex'>  {/*Responsive: hidden sm-flex*/}
       <div className='channel-container'>
         <ChannelBlock />
         <Dropdown header='Topics' selections={topics} />
         <Dropdown header='Questions' selections={questions} />
         <Dropdown header='Random' selections={random} />
       </div>
-      <UserBlock />
+      <UserBlock displayName={displayName} photoURL={photoURL} />
     </div>
   );
 };
@@ -63,15 +70,16 @@ const ChannelBlock = () => (
   </div>
 );
 
-const UserBlock = () => (
+const UserBlock = ({displayName, photoURL}) => (
   <div className='user-block'>
   <div className="avatar online">
     <div className="w-24 rounded-full">
-      <img src="https://preview.redd.it/ogiglyr165p91.png?auto=webp&s=10efe64832620088452adccd502fc04b3eaac3e4" />
+      <img src={photoURL} />
+      {/*<img src="https://preview.redd.it/ogiglyr165p91.png?auto=webp&s=10efe64832620088452adccd502fc04b3eaac3e4" />*/}
     </div>
   </div>
 
-  <h5 className='channel-block-text'>User</h5>
+  <h5 className='channel-block-text'>{displayName}</h5>
 
   </div>
 );

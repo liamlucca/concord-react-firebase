@@ -1,18 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
-import Sidebar from './components/Sidebar';
-import ChannelBar from './components/ChannelBar';
-import ContentContainer from './components/ContentContainer';
-import TopNavigation from './components/TopNavigation';
+import { auth } from "./firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import "./styles/App.css";
+import Welcome from "./components/Welcome";
 
+import Chat from "./Chat";
 
 
 function App() {
+  const [user] = useAuthState(auth);
+
   return (
-    <div className="flex">
-      <Sidebar />
-      <ChannelBar />
-      <ContentContainer />
+    <div className="App">
+      {!user ? (
+        <Welcome />
+      ) : (
+        <>
+          <Chat />
+        </>
+      )}
     </div>
   );
 }
