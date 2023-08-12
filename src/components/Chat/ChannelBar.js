@@ -4,22 +4,23 @@ import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 
 import { auth, db } from "../../firebase";
 import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
+import { act } from 'react-dom/test-utils';
 
 const topics = ['tailwind-css', 'react'];
 const questions = ['jit-compilation', 'purge-files', 'dark-mode'];
 const random = ['variants', 'plugins'];
 
-const ChannelBar = ({setActiveChannel}) => {
+const ChannelBar = ({activeServer, setActiveChannel}) => {
   //Usuario logueado
   const { displayName, photoURL } = auth.currentUser;
 
   //Estado de los canales
   const [channelsList, setChannelsList] = useState([]);
 
-  //Obtener los canales
+  //Obtener/ Renderizar los canales
   async function getChannels(){
     const channelsArray = [];
-    const collectionRef = collection (db, "channels"); //Obtenemos la coleccion "channels" que tenemos en firebase
+    const collectionRef = collection (db, `servers/${activeServer}/channels`); //Obtenemos la coleccion "channels" que tenemos en firebase
     const encryptedChannels = await getDocs(collectionRef); //Obtenemos todos los documentos que estan adentro de la coleccion "channels"
     encryptedChannels.forEach(encryptedChannel=>{
       channelsArray.push(encryptedChannel.data()); //Guardamos cada canal adentro del array "channelsArray"
@@ -33,7 +34,7 @@ const ChannelBar = ({setActiveChannel}) => {
     const channelName = prompt("Inserte nombre del canal");
     if(channelName){
       //La ruta en la base de datos del firebase
-      const docRef = doc(db, `channels/${channelName}`);
+      const docRef = doc(db, `servers/${activeServer}/channels/${channelName}`);
       //Se agrega el canal a la base de datos de firebase
       setDoc(docRef, {
         id: new Date().getTime(),
@@ -44,17 +45,17 @@ const ChannelBar = ({setActiveChannel}) => {
     }
   }
 
-  //Llamamos a la función con useEffect
+  //Cuando el valor de "activeServer" cambie, se ejecuta getChannels()
   useEffect(()=> {
     getChannels();
-  }, [])
+  }, [activeServer])
 
   return (
     <div className='left-side channel-bar shadow-lg h-screen overflow-auto overflow-x-hidden sm:flex'>  {/*Responsive: hidden sm-flex*/}
       <div className='channel-container'>
         <ChannelBlock />
         {/*Secciones con los canales*/}
-        <Dropdown header='Topics' channels={channelsList} addChannel={addChannel} selectChannel={setActiveChannel}/>
+        <Dropdown header=' ' channels={channelsList} addChannel={addChannel} setActiveChannel={setActiveChannel}/>
       </div>
       {/*Usuario Logueado*/}
       <UserBlock displayName={displayName} photoURL={photoURL} />
@@ -63,7 +64,7 @@ const ChannelBar = ({setActiveChannel}) => {
 };
 
 //----------------SECCIÓN DE CANALES-------------------1
-const Dropdown = ({ header, channels, addChannel, selectChannel }) => {
+const Dropdown = ({ header, channels, addChannel, setActiveChannel }) => {
   const [expanded, setExpanded] = useState(true);
 
   return (
@@ -76,12 +77,12 @@ const Dropdown = ({ header, channels, addChannel, selectChannel }) => {
           {header}
         </h5>
         <FaPlus size='12' className='text-accent text-opacity-80 my-auto ml-auto' 
-        onClick={addChannel}/>
+        onClick={() => { addChannel(); setExpanded(!expanded); }} />
       </div>
       {/*----Mapeo de los canales----*/}
       {expanded &&
         channels &&
-        channels.map((channel) => <TopicSelection name={channel.name} select={selectChannel} />)}
+        channels.map((channel) => <TopicSelection name={channel.name} setActiveChannel={setActiveChannel} />)}
     </div>
   );
 };
@@ -97,9 +98,9 @@ const ChevronIcon = ({ expanded }) => {
 };
 
 //----------------CANAL-------------------2
-const TopicSelection = ({ name, select }) => (
+const TopicSelection = ({ name, setActiveChannel }) => (
   <div className='dropdown-selection'
-  onClick={() => select(name)}>  {/*---Seleccionar canal---*/}
+  onClick={() => setActiveChannel(name)}>  {/*---Seleccionar canal---*/}
     <BsHash size='24' className='text-gray-400' />
     <h5 className='dropdown-selection-text'>{name}</h5>
   </div>

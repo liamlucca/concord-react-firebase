@@ -7,13 +7,13 @@ import ContentContainer from './Chat/ContentContainer';
 
 function Chat() {
   const [activeChannel, setActiveChannel] = useState(null);
-  console.log(setActiveChannel);
+  const [activeServer, setActiveServer] = useState(null);
 
   return (
     <div className="flex">
-      <Sidebar />
-      <ChannelBar setActiveChannel={setActiveChannel}/>
-      <ContentContainer activeChannel={activeChannel} />
+      <Sidebar setActiveServer={setActiveServer}/>
+      <ChannelBar activeServer={activeServer} setActiveChannel={setActiveChannel}/>
+      <ContentContainer activeChannel={activeChannel} activeServer={activeServer} />
     </div>
   );
 }

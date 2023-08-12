@@ -5,13 +5,11 @@ import { auth, db, app } from "../../firebase";
 import {
   doc,
   setDoc,
-  addDoc,
   serverTimestamp,
   query,
   collection,
   orderBy,
-  onSnapshot,
-  limit,
+  onSnapshot
 } from "firebase/firestore";
 
 import TopNavigation from './TopNavigation';
@@ -19,14 +17,14 @@ import { BsPlusCircleFill } from 'react-icons/bs';
 import { act } from "react-dom/test-utils";
 
 /*----------CHAT, INPUT Y NAVBAR (TopNavigation) -----------*/
-const ContentContainer = ({activeChannel}) => {
+const ContentContainer = ({activeServer, activeChannel}) => {
   const [messages, setMessages] = useState([]);
   const scroll = useRef();
 
   useEffect(() => {
     //Buscamos los mensajes en la ruta y los ordenamos por la fecha
     const q = query(
-      collection(db, `channels/${activeChannel}/messages`), 
+      collection(db, `/servers/${activeServer}/channels/${activeChannel}/messages`), //servers/${activeServer}/channels/${activeChannel}/messages
       orderBy("createdAt")
     );            
     //  
@@ -57,14 +55,14 @@ const ContentContainer = ({activeChannel}) => {
 
       </div>
       <span ref={scroll}></span>
-      <SendMessageBar scroll={scroll} channelName={activeChannel} />
+      <SendMessageBar scroll={scroll} serverName={activeServer} channelName={activeChannel} />
     </div>
   );
 };
 
 /*---------------INPUT PARA ENVIAR MENSAJES----------------*/
 
-const SendMessageBar = ({ scroll, channelName }) => {
+const SendMessageBar = ({ scroll, serverName, channelName }) => {
   const [message, setMessage] = useState("");
 
   //Funcion
@@ -84,7 +82,7 @@ const SendMessageBar = ({ scroll, channelName }) => {
     const date = new Date().getTime();
 
     //Establecer la ruta del mensaje a una variable
-    const docRef = doc(db, `channels/${channelName}/messages/${date}`);
+    const docRef = doc(db, `/servers/${serverName}/channels/${channelName}/messages/${date}`);
 
     //Setear documento (mensaje) en la base de datos (firestore)
     setDoc(docRef, {
