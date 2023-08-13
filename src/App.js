@@ -16,7 +16,7 @@ function App() {
         <Welcome />
       ) : (
         <>
-          <Chat />
+          <Chat user={user}/>
         </>
       )}
     </div>

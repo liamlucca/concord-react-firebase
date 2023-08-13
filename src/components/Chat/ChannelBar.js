@@ -20,7 +20,7 @@ const ChannelBar = ({activeServer, setActiveChannel}) => {
   //Obtener/ Renderizar los canales
   async function getChannels(){
     const channelsArray = [];
-    const collectionRef = collection (db, `servers/${activeServer}/channels`); //Obtenemos la coleccion "channels" que tenemos en firebase
+    const collectionRef = collection (db, `servers/${activeServer.id}/channels`); //Obtenemos la coleccion "channels" que tenemos en firebase
     const encryptedChannels = await getDocs(collectionRef); //Obtenemos todos los documentos que estan adentro de la coleccion "channels"
     encryptedChannels.forEach(encryptedChannel=>{
       channelsArray.push(encryptedChannel.data()); //Guardamos cada canal adentro del array "channelsArray"
@@ -34,7 +34,7 @@ const ChannelBar = ({activeServer, setActiveChannel}) => {
     const channelName = prompt("Inserte nombre del canal");
     if(channelName){
       //La ruta en la base de datos del firebase
-      const docRef = doc(db, `servers/${activeServer}/channels/${channelName}`);
+      const docRef = doc(db, `servers/${activeServer.id}/channels/${channelName}`);
       //Se agrega el canal a la base de datos de firebase
       setDoc(docRef, {
         id: new Date().getTime(),

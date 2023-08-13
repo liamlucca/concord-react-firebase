@@ -3,11 +3,9 @@ import { BsPlus, BsFillLightningFill, BsGearFill } from 'react-icons/bs';
 import { FaFire, FaPoo } from 'react-icons/fa';
 
 import { db } from "../../firebase";
-import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
+import { doc, setDoc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
 
-import ChannelBar, { getChannels } from './ChannelBar';
-
-const SideBar = ({setActiveServer}) => {
+const SideBar = ({user, setActiveServer}) => {
 
   //Lista de servers
   const [serversList, setServersList] = useState([]);
@@ -15,10 +13,20 @@ const SideBar = ({setActiveServer}) => {
   //Obtener los servers
   async function getServers(){
     const serversArray = [];
-    const collectionRef = collection(db, "servers"); //Obtenemos la coleccion "servers" que tenemos en firebase
-    const encryptedServers = await getDocs(collectionRef); //Obtenemos todos los documentos que estan adentro de la coleccion "servers"
-    encryptedServers.forEach(encryptedServers=>{
-      serversArray.push(encryptedServers.data()); //Guardamos cada canal adentro del array "serversArray"
+    const joinedServersArray = [];
+    //Obtenemos la coleccion "servers" que tenemos en firebase
+    const serversRef = collection(db, "servers"); 
+    const joinedServers =  await getDocs(collection(db, `users/${user.uid}/joinedServers`)); //Si Funciona
+    //Metemos a los servidores unidos (data) en el array
+    joinedServers.forEach(joinedServer=>{
+      joinedServersArray.push(joinedServer.data().id); //Guardamos cada canal adentro del array "joinedServersArray"
+    });
+    // Consulta para obtener los servidores a los que el usuario está unido
+    const q = query(serversRef, where('id', 'in', joinedServersArray)); //No funciona, está vacio
+    const encryptedServers = (await getDocs(q));
+    //Metemos los servidores (data) en el array
+    encryptedServers.forEach(server=>{
+      serversArray.push(server.data()); //Guardamos cada canal adentro del array "serversArray"
     });
     //Guardamos el array de servers en el estado
     setServersList(serversArray);
@@ -29,23 +37,50 @@ const SideBar = ({setActiveServer}) => {
     getServers();
   }, [])
 
-  //CREAR UN SERVIDOR
+  //CREAR UN SERVIDOR (botón)
   function addServer(){
     const newName = prompt("Crear nombre del servidor");
     const newCode = prompt("Crear código del servidor");
+    if(!newName) {return;}
     const date = new Date().getTime();
-    const id = `${newName}_${date}`;
-
+    const unmodifiedId = `${newName}_${date}`;
+    const id = unmodifiedId.replaceAll(' ', ''); //Le borra los espacios
     //Ruta del servidor
     const docRef = doc(db, `servers/${id}`);
-
-    setDoc(docRef, {
+    const docData = {
       id: id,
       name: newName,
       code: newCode,
-    })
-
+    }
+    setDoc(docRef, docData);
+    setServerInUser(docData.id);
     getServers();
+  }
+
+  //UNIRSE A UN SERVIDOR (botón)
+  async function joinServer(){
+    const id = prompt("Introducir id del servidor");
+    const code = prompt("Introducir código del servidor");
+    try {
+      const serverDocRef = doc(db, 'servers', id);
+      const serverDoc = await getDoc(serverDocRef);
+      if (serverDoc.exists()) {
+        const serverCode = serverDoc.data().code;
+        if (serverCode === code){
+          setServerInUser(id);
+          getServers();
+        }
+      }
+    }
+    catch (error) {
+       console.error('Error al unirse al servidor:', error);
+    }
+  }
+
+  //Unir al usuario a un servidor por la id
+  function setServerInUser(joinServerId){
+    const docRef = doc(db, `users/${user.uid}/joinedServers/${joinServerId}`);
+    setDoc(docRef,{id: joinServerId});
   }
 
   return (
@@ -54,13 +89,13 @@ const SideBar = ({setActiveServer}) => {
                     
         <DefaultIcon icon={<FaFire size="28" />} />
         <Divider />
-        <DefaultIcon icon={<BsPlus size="32" onClick={addServer}/>}/>
+        <DefaultIcon icon={<BsPlus size="32" onClick={addServer}/>}/> {/*Crear servidor*/}
 
         {/*----Mapeo de los servers----*/}
         {serversList &&
-          serversList.map((server) => <ServerIcon setActiveServer={setActiveServer} id={server.id} text={server.name} />) /*FALTA EL ICON*/}
+          serversList.map((server) => <ServerIcon setActiveServer={setActiveServer} serverData={server} text={server.name} />) /*FALTA EL ICON*/}
 
-        <DefaultIcon icon={<BsFillLightningFill size="20" />} />
+        <DefaultIcon icon={<BsFillLightningFill size="20" onClick={joinServer} />} /> {/*Unirse a un servidor*/}
         <DefaultIcon icon={<FaPoo size="20" />} />
         <Divider />
         <DefaultIcon icon={<BsGearFill size="22"/>} />
@@ -69,8 +104,8 @@ const SideBar = ({setActiveServer}) => {
 };
 
 //Icono del sidebar de los servidores de los usuarios
-const ServerIcon = ({setActiveServer, id, icon, text = 'tooltip 💡'}) => (
-  <div onClick={() => setActiveServer(id)} className="sidebar-icon group min-h-12">  {/*---Seleccionar canal---*/}
+const ServerIcon = ({setActiveServer, serverData, icon, text = 'tooltip 💡'}) => (
+  <div onClick={() => {setActiveServer(serverData)}} className="sidebar-icon group min-h-12">  {/*---Seleccionar canal---*/}
     {icon}
     <span class="sidebar-tooltip group-hover:scale-100">
       {text}

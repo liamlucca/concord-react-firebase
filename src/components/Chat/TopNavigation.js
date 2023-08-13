@@ -8,18 +8,47 @@ import {
     FaAngleRight,
     FaAngleLeft,
     FaAlignRight,
+    FaInfoCircle,
   } from 'react-icons/fa';
   import useDarkMode from '../../hooks/useDarkMode';
 import { useState, useEffect } from 'react';
   
-  const TopNavigation = ({channelName}) => {
+
+  const TopNavigation = ({activeServer, channelName}) => {
+
+    //Titulo del chat (canal)
+    const [title, setTitle] = useState(channelName);
+
+    //Actualizar el "Titulo del chat" al cambiar de servidor
+    useEffect(
+      ()=> setTitle(""), [activeServer]
+      );
+
+    //Actualizar el "Titulo del chat" al cambiar de canal
+    useEffect(
+      ()=> setTitle(channelName), [channelName]
+      );    
+
+    //Botón y función para obtener la info del server
+    const InfoCircle = () => <span><FaInfoCircle size='24' className='top-navigation-icon' onClick={getServerInfo}/></span>;
+    function getServerInfo(){
+      if(!activeServer) {return;}
+      alert(      
+        `
+         ID:    ${activeServer.id} \n
+         Name:    ${activeServer.name} \n
+         Code:  ${activeServer.code}
+         `
+         );
+    }
+
     return (
     <div className="top-navigation bg-base-100 dark:bg-gray-800">
       <div className="w-screen">
         <label tabIndex={0} className=""> {/*esto antes era: sm:hidden */}
           <LeftMenuIcon />
         </label>
-        <a className="btn btn-ghost normal-case text-xl"><Title text={channelName} /></a>
+        <a className="btn btn-ghost normal-case text-xl"><Title text={title} /></a>
         <div className="dropdown p-0 flex flex-row-reverse mr-5">
           <label tabIndex={0} className="btn btn-ghost lg:hidden">
             <RightMenuIcon />
@@ -28,6 +57,7 @@ import { useState, useEffect } from 'react';
           <li><ThemeIcon /></li>
           <li><UserCircle /></li>
           <li><BellIcon /></li>
+          <li><InfoCircle /></li>
           </ul>
         </div>
       </div>
@@ -36,6 +66,7 @@ import { useState, useEffect } from 'react';
           <li><ThemeIcon /></li>
           <li><UserCircle /></li>
           <li><BellIcon /></li>
+          <li><InfoCircle /></li>
         </ul>
       </div>
     </div>

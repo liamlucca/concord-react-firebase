@@ -22,9 +22,10 @@ const ContentContainer = ({activeServer, activeChannel}) => {
   const scroll = useRef();
 
   useEffect(() => {
+    if(!activeServer) {return;}
     //Buscamos los mensajes en la ruta y los ordenamos por la fecha
     const q = query(
-      collection(db, `/servers/${activeServer}/channels/${activeChannel}/messages`), //servers/${activeServer}/channels/${activeChannel}/messages
+      collection(db, `/servers/${activeServer.id}/channels/${activeChannel}/messages`), //servers/${activeServer.id}/channels/${activeChannel}/messages
       orderBy("createdAt")
     );            
     //  
@@ -39,12 +40,12 @@ const ContentContainer = ({activeServer, activeChannel}) => {
       scroll.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
     });
     return () => unsubscribe;
-  }, [activeChannel]);
+  }, [activeChannel, activeServer]);
 
 
   return (
     <div className='content-container h-screen overflow-y-auto '>
-      <TopNavigation channelName={activeChannel} />
+      <TopNavigation activeServer={activeServer} channelName={activeChannel} />
       <div className='ml-5 mt-20 mb-14'>
 
       {/*----------MENSAJES----------*/}
@@ -55,14 +56,14 @@ const ContentContainer = ({activeServer, activeChannel}) => {
 
       </div>
       <span ref={scroll}></span>
-      <SendMessageBar scroll={scroll} serverName={activeServer} channelName={activeChannel} />
+      <SendMessageBar scroll={scroll} activeServer={activeServer} channelName={activeChannel} />
     </div>
   );
 };
 
 /*---------------INPUT PARA ENVIAR MENSAJES----------------*/
 
-const SendMessageBar = ({ scroll, serverName, channelName }) => {
+const SendMessageBar = ({ scroll, activeServer, channelName }) => {
   const [message, setMessage] = useState("");
 
   //Funcion
@@ -82,7 +83,7 @@ const SendMessageBar = ({ scroll, serverName, channelName }) => {
     const date = new Date().getTime();
 
     //Establecer la ruta del mensaje a una variable
-    const docRef = doc(db, `/servers/${serverName}/channels/${channelName}/messages/${date}`);
+    const docRef = doc(db, `/servers/${activeServer.id}/channels/${channelName}/messages/${date}`);
 
     //Setear documento (mensaje) en la base de datos (firestore)
     setDoc(docRef, {
