@@ -5,6 +5,7 @@ import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 import { auth, db } from "../../firebase";
 import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { act } from 'react-dom/test-utils';
+import Swal from 'sweetalert2';
 
 const topics = ['tailwind-css', 'react'];
 const questions = ['jit-compilation', 'purge-files', 'dark-mode'];
@@ -30,8 +31,19 @@ const ChannelBar = ({activeServer, setActiveChannel}) => {
 }
 
   //Agregar canal
-  function addChannel(){
-    const channelName = prompt("Inserte nombre del canal");
+  async function addChannel(){
+    const {value: channelName} = await Swal.fire({
+      background: '#2d3748',
+      color:'#48bb78',
+      confirmButtonColor: '#48bb78',
+      cancelButtonColor: '#718096',
+
+      title: 'Inserte nombre del canal',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Ok',
+    });
+
     if(channelName){
       //La ruta en la base de datos del firebase
       const docRef = doc(db, `servers/${activeServer.id}/channels/${channelName}`);

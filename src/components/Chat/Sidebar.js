@@ -4,6 +4,7 @@ import { FaFire, FaPoo } from 'react-icons/fa';
 
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
+import Swal from 'sweetalert2';
 
 const SideBar = ({user, setActiveServer}) => {
 
@@ -38,9 +39,36 @@ const SideBar = ({user, setActiveServer}) => {
   }, [])
 
   //CREAR UN SERVIDOR (botón)
-  function addServer(){
-    const newName = prompt("Crear nombre del servidor");
-    const newCode = prompt("Crear código del servidor");
+  async function addServer(){
+
+    //Prompt 1
+    const {value: newName} = await Swal.fire({
+      //Estilo
+      background: '#2d3748',
+      color:'#48bb78',
+      confirmButtonColor: '#48bb78',
+      cancelButtonColor: '#718096',
+      //Datos
+      title: 'Crear nombre del servidor',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Ok',
+    });
+    
+    //Prompt 2
+    const {value: newCode} = await Swal.fire({   
+      //Estilo   
+      background: '#2d3748',
+      color:'#48bb78',
+      confirmButtonColor: '#48bb78',
+      cancelButtonColor: '#718096',
+      //Datos
+      title: 'Escribir una contraseña para el servidor',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Ok',
+    });
+
     if(!newName) {return;}
     const date = new Date().getTime();
     const unmodifiedId = `${newName}_${date}`;
@@ -59,8 +87,21 @@ const SideBar = ({user, setActiveServer}) => {
 
   //UNIRSE A UN SERVIDOR (botón)
   async function joinServer(){
-    const id = prompt("Introducir id del servidor");
-    const code = prompt("Introducir código del servidor");
+
+    const {value: id} = await Swal.fire({
+      title: 'Introducir id del servidor',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Ok',
+    });
+    
+    const {value: code} = await Swal.fire({
+      title: 'Introducir contraseña del servidor',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Ok',
+    });
+
     try {
       const serverDocRef = doc(db, 'servers', id);
       const serverDoc = await getDoc(serverDocRef);

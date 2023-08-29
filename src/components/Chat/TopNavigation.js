@@ -12,8 +12,8 @@ import {
   } from 'react-icons/fa';
   import useDarkMode from '../../hooks/useDarkMode';
 import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
   
-
   const TopNavigation = ({activeServer, channelName}) => {
 
     //Titulo del chat (canal)
@@ -33,13 +33,20 @@ import { useState, useEffect } from 'react';
     const InfoCircle = () => <span><FaInfoCircle size='24' className='top-navigation-icon' onClick={getServerInfo}/></span>;
     function getServerInfo(){
       if(!activeServer) {return;}
-      alert(      
-        `
-         ID:    ${activeServer.id} \n
-         Name:    ${activeServer.name} \n
-         Code:  ${activeServer.code}
-         `
-         );
+      //Prompt 
+      Swal.fire({   
+        //Estilo
+        background: '#2d3748',
+        color:'#a0aec0',
+        confirmButtonColor: '#48bb78',
+        cancelButtonColor: '#718096',
+        //Datos
+        title: 'Info',
+        text: 
+        `ID:    ${activeServer.id} |
+         Name:  ${activeServer.name} |   
+         Code:  ${activeServer.code}`, 
+        })
     }
 
     return (
@@ -116,18 +123,7 @@ import { useState, useEffect } from 'react';
       setIsHide(!isHide);
       isHide ? disable() : enable() ;  
     }; 
-    //Responsive
-    /*useEffect(() => {
-      function handleResize() {
-        if (window.innerWidth < 640) {
-          setIsHide(true);
-          disable();  
-          return (Button());
-        } 
-      }
-      handleResize();
-      window.addEventListener("resize", handleResize);
-      });*/
+
     //Función a retornar del boton
     const Button = () => {
       return (
