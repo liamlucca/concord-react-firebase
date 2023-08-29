@@ -89,6 +89,12 @@ const SideBar = ({user, setActiveServer}) => {
   async function joinServer(){
 
     const {value: id} = await Swal.fire({
+      //Estilo   
+      background: '#2d3748',
+      color:'#48bb78',
+      confirmButtonColor: '#48bb78',
+      cancelButtonColor: '#718096',
+      //Datos
       title: 'Introducir id del servidor',
       input: 'text',
       showCancelButton: true,
@@ -96,6 +102,12 @@ const SideBar = ({user, setActiveServer}) => {
     });
     
     const {value: code} = await Swal.fire({
+      //Estilo   
+      background: '#2d3748',
+      color:'#48bb78',
+      confirmButtonColor: '#48bb78',
+      cancelButtonColor: '#718096',
+      //Datos
       title: 'Introducir contraseña del servidor',
       input: 'text',
       showCancelButton: true,
