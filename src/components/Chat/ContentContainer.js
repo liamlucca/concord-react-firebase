@@ -100,7 +100,7 @@ const SendMessageBar = ({ scroll, activeServer, channelName }) => {
 
   return (
     <div className='bottom-bar'>
-    <PlusIcon />
+    <button onClick={()=>""}><PlusIcon /></button>
     <form onSubmit={(event) => sendMessage(event)} className="w-full">
       <input
         disabled = {channelName ? false : true}

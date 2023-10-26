@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { BsPlus, BsFillLightningFill, BsGearFill } from 'react-icons/bs';
+import { BsPlus, BsFillLightningFill, BsGearFill, BsDatabase } from 'react-icons/bs';
 import { FaFire, FaPoo } from 'react-icons/fa';
 
 import { db } from "../../firebase";
+
 import { doc, setDoc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
+import {getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage" 
 import Swal from 'sweetalert2';
+
+const storage = getStorage();
 
 const SideBar = ({user, setActiveServer}) => {
 
@@ -54,6 +58,8 @@ const SideBar = ({user, setActiveServer}) => {
       showCancelButton: true,
       confirmButtonText: 'Ok',
     });
+
+    if(!newName) {return;}
     
     //Prompt 2
     const {value: newCode} = await Swal.fire({   
@@ -65,25 +71,54 @@ const SideBar = ({user, setActiveServer}) => {
       //Datos
       title: 'Escribir una contraseña para el servidor',
       input: 'text',
-      showCancelButton: true,
       confirmButtonText: 'Ok',
     });
 
-    if(!newName) {return;}
+    //Prompt 3
+    const {value: image} = await Swal.fire({   
+      //Estilo   
+      background: '#2d3748',
+      color:'#48bb78',
+      confirmButtonColor: '#48bb78',
+      cancelButtonColor: '#718096',
+      //Datos
+      title: 'Subí una imagen para el servidor',
+      input: 'file',
+      showCancelButton: false,
+      confirmButtonText: 'Listo',
+    });
+
+    //Id
     const date = new Date().getTime();
     const unmodifiedId = `${newName}_${date}`;
-    const id = unmodifiedId.replaceAll(' ', ''); //Le borra los espacios
+    const id = unmodifiedId.replaceAll(' ', ''); 
+
+    //Imagen
+    let iconUrl = "";
+    if(image){
+      const imageRef = ref(storage, `servers/${id}/config/logo`);   
+      const metadata = {
+        contentType: 'image/jpeg',
+      };   
+      uploadBytes(imageRef, image, metadata);
+      iconUrl = await getDownloadURL(ref(storage, `servers/${id}/config/logo`)).then((data) =>  { return data })
+    };
+
     //Ruta del servidor
     const docRef = doc(db, `servers/${id}`);
     const docData = {
       id: id,
       name: newName,
       code: newCode,
+      iconUrl: iconUrl
     }
+
     setDoc(docRef, docData);
     setServerInUser(docData.id);
     getServers();
   }
+
+
 
   //UNIRSE A UN SERVIDOR (botón)
   async function joinServer(){
@@ -146,7 +181,7 @@ const SideBar = ({user, setActiveServer}) => {
 
         {/*----Mapeo de los servers----*/}
         {serversList &&
-          serversList.map((server) => <ServerIcon setActiveServer={setActiveServer} serverData={server} text={server.name} />) /*FALTA EL ICON*/}
+          serversList.map((server) => <ServerIcon setActiveServer={setActiveServer} serverData={server}/>) /*FALTA EL ICON*/}
 
         <DefaultIcon icon={<BsFillLightningFill size="20" onClick={joinServer} />} /> {/*Unirse a un servidor*/}
         <DefaultIcon icon={<FaPoo size="20" />} />
@@ -157,11 +192,17 @@ const SideBar = ({user, setActiveServer}) => {
 };
 
 //Icono del sidebar de los servidores de los usuarios
-const ServerIcon = ({setActiveServer, serverData, icon, text = 'tooltip 💡'}) => (
+const ServerIcon = ({setActiveServer, serverData}) => (
   <div onClick={() => {setActiveServer(serverData)}} className="sidebar-icon group min-h-12">  {/*---Seleccionar canal---*/}
-    {icon}
+
+      {serverData.iconUrl ? (
+        <img src={serverData.iconUrl } className='sidebar-icon aspect-square'/> 
+      ) : (
+        serverData.name[0].toUpperCase()
+      )}
+
     <span class="sidebar-tooltip group-hover:scale-100">
-      {text}
+      {serverData.name}
     </span>
   </div>
 ); 
