@@ -9,12 +9,15 @@ import {
   query,
   collection,
   orderBy,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
+import {getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage" 
 
 import TopNavigation from './TopNavigation';
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { act } from "react-dom/test-utils";
+
+const storage = getStorage();
 
 /*----------CHAT, INPUT Y NAVBAR (TopNavigation) -----------*/
 const ContentContainer = ({activeServer, activeChannel}) => {
@@ -37,7 +40,7 @@ const ContentContainer = ({activeServer, activeChannel}) => {
       });
       setMessages(messages);
       //Scrollear para abajo
-      scroll.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+      try { scroll.current.scrollIntoView({behavior: "smooth",block: "end", inline: "nearest",});} catch(error) { }
     });
     return () => unsubscribe;
   }, [activeChannel, activeServer]);
@@ -66,78 +69,138 @@ const ContentContainer = ({activeServer, activeChannel}) => {
 const SendMessageBar = ({ scroll, activeServer, channelName }) => {
   const [message, setMessage] = useState("");
 
-  //Funcion
-  const sendMessage = async (event) => {
+  /*-----------ARCHIVOS-----------*/
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+      try {
+        const storageRef = ref(storage, `/servers/${activeServer.id}/uploads/${channelName}/${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+
+        const fileURL = await getDownloadURL(snapshot.ref);
+
+        sendMessageWithFile(fileURL, file.type); 
+      } catch (error) {
+        console.error('Error al cargar el archivo:', error);
+      }
+    }
+  };
+
+  const sendMessageWithFile = async (fileUrl, fileType) => {
+    const { displayName, photoURL } = auth.currentUser;
+    const date = new Date().getTime();
+    const docRef = doc(
+      db,
+      `/servers/${activeServer.id}/channels/${channelName}/messages/${date}`
+    );
+
+    await setDoc(docRef, {
+      text: fileUrl,
+      name: displayName,
+      avatar: photoURL,
+      createdAt: serverTimestamp(),
+      id: date,
+      type: fileType, // Usar un campo "type" para el tipo de archivo
+    });
+
+    setMessage('');
+  };
+
+  /*--------------------------------*/
+
+  const sendMessage = (event) => {
     event.preventDefault();
 
-    //chequea si el mensaje esta vacio
-    if (message.trim() === "") {
-      alert("Enter valid message");
+    if (message.trim() === '') {
+      alert('Enter valid message');
       return;
     }
 
-    //Consigue los datos del usuario logueado (id, nombre, foto)
-    const { uid, displayName, photoURL } = auth.currentUser;
-
-    //Fecha de creación del mensaje
+    const { displayName, photoURL } = auth.currentUser;
     const date = new Date().getTime();
+    const docRef = doc(
+      db,
+      `/servers/${activeServer.id}/channels/${channelName}/messages/${date}`
+    );
 
-    //Establecer la ruta del mensaje a una variable
-    const docRef = doc(db, `/servers/${activeServer.id}/channels/${channelName}/messages/${date}`);
-
-    //Setear documento (mensaje) en la base de datos (firestore)
     setDoc(docRef, {
       text: message,
       name: displayName,
       avatar: photoURL,
       createdAt: serverTimestamp(),
       id: date,
-    })
+    });
 
-    //vaciar el input
-    setMessage("");
+    setMessage('');
   };
 
   return (
-    <div className='bottom-bar'>
-    <button onClick={()=>""}><PlusIcon /></button>
-    <form onSubmit={(event) => sendMessage(event)} className="w-full">
-      <input
-        disabled = {channelName ? false : true}
-        id="messageInput"
-        name="messageInput"
-        type="text"
-        className='bottom-bar-input'
-        placeholder={`Enviar mensaje a #${channelName}`}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-    </form>
-  </div>
+    <div className="bottom-bar">
+      <button onClick={() => document.getElementById('fileInput').click()}>
+        <PlusIcon />
+      </button>
+      <form onSubmit={sendMessage} className="w-full">
+        <input
+          disabled={channelName ? false : true}
+          id="messageInput"
+          name="messageInput"
+          type="text"
+          className="bottom-bar-input"
+          placeholder={`Enviar mensaje a #${channelName}`}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*, audio/*"
+          onChange={handleFileUpload}
+          style={{ display: 'none' }}
+        />
+      </form>
+    </div>
   );
-
 };
+
 
 
 /*----------------MENSAJE----------------*/
 
 const Message = ({ message }) => {
-
   const [user] = useAuthState(auth);
 
+  const isImage = message.type && message.type.startsWith('image/');
+  const isAudio = message.type && message.type.startsWith('audio/');
+
   return (
-  <div className={`chat chat-start chat-${message.uid === user.uid ? "start" : "start"} mb-3`}>
-    <div className="chat-image">
-      <div className="w-10 rounded-full">
-        <img className='avatar-message' src={message.avatar} />
+    <div className={`chat chat-start chat-${message.uid === user.uid ? "start" : "start"} mb-3`}>
+      <div className="chat-image">
+        <div className="w-10 rounded-full">
+          <img className='avatar-message' src={message.avatar} />
+        </div>
       </div>
+      <div className="chat-header">
+        <b className='dark:text-gray-200'>{message.name}</b>
+        <time className="text-xs opacity-50 ml-2 dark:text-gray-100">{message.serverTimestamp}</time>
+      </div>
+      {isImage ? (
+        // Si el mensaje es una imagen, muestra la imagen en lugar del texto
+        <div className="chat-bubble">
+          <img src={message.text} alt="Imagen" />
+        </div>
+      ) : isAudio ? (
+        // Si el mensaje es un audio, muestra un reproductor de audio
+        <div className="chat-bubble">
+          <audio controls>
+            <source src={message.text} type={message.type} />
+          </audio>
+        </div>
+      ) : (
+        // Si no es una imagen ni un audio, muestra el texto
+        <div className="chat-bubble dark:bg-gray-600 break-words text-start">{message.text}</div>
+      )}
     </div>
-    <div className="chat-header">
-      <b className='dark:text-gray-200'>{message.name}</b>
-      <time className="text-xs opacity-50 ml-2 dark:text-gray-100">{message.serverTimestamp}</time>
-    </div>
-    <div className="chat-bubble dark:bg-gray-600 break-words text-start">{message.text}</div>
-  </div>
   );
 };
 
