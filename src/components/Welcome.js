@@ -39,7 +39,10 @@ const Welcome = () => {
 
       <div className="additional-content">
         <h3>¡Descubre más sobre Concord!</h3>
-        <p>Aquí puedes agregar más información sobre tu aplicación.</p>
+        <p>Se nos ocurrio inventar concord debido a la necesidad que teniamos de tener un chat rapido para comunicarnos mientras estabamos operando.</p>
+        <p>Así que al momento pensamos en Discord pero este consumia muchos recursos para usarlo como proceso secundario</p> 
+        <p>así que teniamos que hacerlo más simple, menos pesado, más facil de usar y sobre todo que estuviera en un lado que no molestara </p>
+        <p> ni añadiera un uso muy significante de recursos, así nació la idea de la aplicacion web Concord.</p>
       </div>
     </main>
   );
