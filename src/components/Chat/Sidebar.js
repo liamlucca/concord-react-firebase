@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { BsPlus, BsFillLightningFill, BsGearFill, BsDatabase } from 'react-icons/bs';
+import { BsPlus, BsWechat, BsGearFill, BsDatabase } from 'react-icons/bs';
 import { FaFire, FaPoo } from 'react-icons/fa';
+import { HiUserGroup } from 'react-icons/hi'
 
 import { db } from "../../firebase";
 
@@ -10,10 +11,13 @@ import Swal from 'sweetalert2';
 
 const storage = getStorage();
 
-const SideBar = ({user, setActiveServer}) => {
+const SideBar = ({user, setActiveServer, isConfigOpen, setActiveChannel}) => {
 
   //Lista de servers
   const [serversList, setServersList] = useState([]);
+
+  //Unir al servidor global
+  activateGlobalServer(setActiveServer, setServerInUser, setActiveChannel);
 
   //Obtener los servers
   async function getServers(){
@@ -40,7 +44,12 @@ const SideBar = ({user, setActiveServer}) => {
   //Llamamos a la función con useEffect 
   useEffect(()=> {
     getServers();
-  }, [])
+  }, []);
+
+  //Actualizar los servers si se cierra la ventana de configuracion
+  useEffect(()=> {
+    getServers();
+  }, [isConfigOpen]);
 
   //CREAR UN SERVIDOR (botón)
   async function addServer(){
@@ -74,8 +83,14 @@ const SideBar = ({user, setActiveServer}) => {
       confirmButtonText: 'Ok',
     });
 
+    //Id
+    const date = new Date().getTime();
+    const unmodifiedId = `${newName}_${date}`;
+    const id = unmodifiedId.replaceAll(' ', ''); 
+
+
     //Prompt 3
-    const {value: image} = await Swal.fire({   
+    /*const {value: image} = await Swal.fire({   
       //Estilo   
       background: '#2d3748',
       color:'#48bb78',
@@ -86,23 +101,19 @@ const SideBar = ({user, setActiveServer}) => {
       input: 'file',
       showCancelButton: false,
       confirmButtonText: 'Listo',
-    });
-
-    //Id
-    const date = new Date().getTime();
-    const unmodifiedId = `${newName}_${date}`;
-    const id = unmodifiedId.replaceAll(' ', ''); 
-
-    //Imagen
-    let iconUrl = "";
+    });                   */
+     //Imagen
+     let iconUrl = "";    /*
     if(image){
       const imageRef = ref(storage, `servers/${id}/config/logo`);   
       const metadata = {
-        contentType: 'image/jpeg',
+        contentType: image.type,
       };   
       uploadBytes(imageRef, image, metadata);
-      iconUrl = await getDownloadURL(ref(storage, `servers/${id}/config/logo`)).then((data) =>  { return data })
-    };
+      try{
+      iconUrl = await getDownloadURL(ref(storage, `servers/${id}/config/logo`)).then((data) =>  { return data })}
+      catch(error){console.error("Error al cargar la imagen del servidor")}
+    };                      */
 
     //Ruta del servidor
     const docRef = doc(db, `servers/${id}`);
@@ -135,6 +146,8 @@ const SideBar = ({user, setActiveServer}) => {
       showCancelButton: true,
       confirmButtonText: 'Ok',
     });
+
+    if(!id) return;
     
     const {value: code} = await Swal.fire({
       //Estilo   
@@ -173,20 +186,21 @@ const SideBar = ({user, setActiveServer}) => {
 
   return (
     <div className="left-side fixed top-0 left-0 h-screen w-16 sm:flex flex-col
-                  bg-white dark:bg-gray-900 shadow-lg z-10 overflow-y-auto overflow-x-hidden"> {/*Responsive: hidden sm-flex*/}
+                  bg-white dark:bg-gray-900 shadow-lg overflow-y-auto overflow-x-hidden"> {/*Responsive: hidden sm-flex*/}
                     
-        <DefaultIcon icon={<FaFire size="28" />} />
+        <DefaultIcon icon={<BsWechat size="28" />} />
         <Divider />
-        <DefaultIcon icon={<BsPlus size="32" onClick={addServer}/>}/> {/*Crear servidor*/}
 
         {/*----Mapeo de los servers----*/}
         {serversList &&
           serversList.map((server) => <ServerIcon setActiveServer={setActiveServer} serverData={server}/>) /*FALTA EL ICON*/}
 
-        <DefaultIcon icon={<BsFillLightningFill size="20" onClick={joinServer} />} /> {/*Unirse a un servidor*/}
-        <DefaultIcon icon={<FaPoo size="20" />} />
+        {/*<DefaultIcon icon={<FaPoo size="20" />} />*/}
         <Divider />
-        <DefaultIcon icon={<BsGearFill size="22"/>} />
+        {/*<DefaultIcon icon={<BsGearFill size="22"/>} />*/}
+
+        <DefaultIcon icon={<BsPlus size="32" onClick={addServer}/>}/> {/*Crear servidor*/}
+        <DefaultIcon icon={<HiUserGroup size="20" onClick={joinServer} />} /> {/*Unirse a un servidor*/}
     </div>
   );
 };
@@ -218,5 +232,26 @@ const DefaultIcon = ({icon, text = 'tooltip 💡'}) => (
 );
 
 const Divider = () => <hr className="sidebar-hr" />;
+
+
+function activateGlobalServer(setActiveServer, setServerInUser, setActiveChannel){
+  const globalServerId = 'GlobalServer'; // El ID del servidor global en Firebase
+  const serverGlobalRef = doc(db, 'servers', globalServerId); // Reemplaza 'servers' por tu colección
+  setServerInUser(globalServerId);
+  useEffect(() => {
+    (async () => {
+      try {
+        const serverDoc = await getDoc(serverGlobalRef);
+        if (serverDoc.exists()) {
+          const serverData = serverDoc.data();
+          setActiveServer(serverData); // Establece el servidor global como activo
+          setActiveChannel("general");
+        }
+      } catch (error) {
+        console.error('Error al cargar el servidor global:', error);
+      }
+    })();
+  }, []);
+}
 
 export default SideBar;

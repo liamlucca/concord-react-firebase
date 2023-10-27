@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './../styles/App.css';
 import './../styles/index.css';
 import Sidebar from './Chat/Sidebar';
 import ChannelBar from './Chat/ChannelBar';
 import ContentContainer from './Chat/ContentContainer';
+import ServerConfigPopup from './Chat/ServerConfigPopup';
+
 
 import { db } from "../firebase";
 import { doc, collection, setDoc } from "firebase/firestore";
@@ -12,14 +14,18 @@ import { doc, collection, setDoc } from "firebase/firestore";
 function Chat({user}) {
   const [activeChannel, setActiveChannel] = useState(null);
   const [activeServer, setActiveServer] = useState(null);
+  const [isConfigOpen, setConfigOpen] = useState(false);
 
   setUser(user);
 
   return (
     <div className="flex">
-      <Sidebar user={user} setActiveServer={setActiveServer}/>
+      {/*Chat*/}
+      <Sidebar user={user} setActiveServer={setActiveServer} isConfigOpen={isConfigOpen} setActiveChannel={setActiveChannel}/>
       <ChannelBar activeServer={activeServer} setActiveChannel={setActiveChannel}/>
-      <ContentContainer activeServer={activeServer} activeChannel={activeChannel} />
+      <ContentContainer activeServer={activeServer} activeChannel={activeChannel} setConfigOpen={setConfigOpen} />
+      {/*Menu desplegable*/}
+      <ServerConfigPopup activeServer={activeServer} isConfigOpen={isConfigOpen} setConfigOpen={setConfigOpen} user={user}/>
     </div>
   );
 }

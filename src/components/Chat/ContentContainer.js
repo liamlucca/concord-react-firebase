@@ -20,7 +20,7 @@ import { act } from "react-dom/test-utils";
 const storage = getStorage();
 
 /*----------CHAT, INPUT Y NAVBAR (TopNavigation) -----------*/
-const ContentContainer = ({activeServer, activeChannel}) => {
+const ContentContainer = ({activeServer, activeChannel, setConfigOpen}) => {
   const [messages, setMessages] = useState([]);
   const scroll = useRef();
 
@@ -47,8 +47,8 @@ const ContentContainer = ({activeServer, activeChannel}) => {
 
 
   return (
-    <div className='content-container h-screen overflow-y-auto '>
-      <TopNavigation activeServer={activeServer} channelName={activeChannel} />
+    <div className='content-container h-screen overflow-y-auto'>
+      <TopNavigation activeServer={activeServer} channelName={activeChannel} setConfigOpen={setConfigOpen} />
       <div className='ml-5 mt-20 mb-14'>
 
       {/*----------MENSAJES----------*/}
@@ -75,7 +75,7 @@ const SendMessageBar = ({ scroll, activeServer, channelName }) => {
 
     if (file) {
       try {
-        const storageRef = ref(storage, `/servers/${activeServer.id}/uploads/${channelName}/${file.name}`);
+        const storageRef = ref(storage, `/servers/${activeServer.id}/uploads/${channelName}/${file.name}_${new Date().getTime()}`);
         const snapshot = await uploadBytes(storageRef, file);
 
         const fileURL = await getDownloadURL(snapshot.ref);
@@ -187,7 +187,7 @@ const Message = ({ message }) => {
       {isImage ? (
         // Si el mensaje es una imagen, muestra la imagen en lugar del texto
         <div className="chat-bubble">
-          <img src={message.text} alt="Imagen" />
+          <img src={message.text} alt="Imagen" className="rounded-md"/>
         </div>
       ) : isAudio ? (
         // Si el mensaje es un audio, muestra un reproductor de audio
