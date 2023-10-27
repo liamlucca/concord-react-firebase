@@ -2,6 +2,7 @@ import React from "react";
 import GoogleSignin from "../img/btn_google_signin_dark_pressed_web.png";
 import { auth } from "../firebase";
 import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import "./welcome.css";
 
 const Welcome = () => {
   const googleSignIn = () => {
@@ -11,14 +12,35 @@ const Welcome = () => {
 
   return (
     <main className="welcome">
-      <h2>Concord</h2>
-      <button onClick={googleSignIn} className="sign-in">
-        <img       
-          src={GoogleSignin}
-          alt="sign in with google"
-          type="button"
-        />
+      <header className="header">
+        <h1>Concord</h1>
+      </header>
+
+      <section className="features">
+        <div className="feature">
+          <h2>Comunicación en tiempo real</h2>
+          <p>Chatea con amigos y colegas en tiempo real.</p>
+        </div>
+
+        <div className="feature">
+          <h2>Un lugar propio para ti y tu grupo</h2>
+          <p>Crea canales propios y participa en conversaciones.</p>
+        </div>
+
+        <div className="feature">
+          <h2>Sube imagenes y diviertete</h2>
+          <p>Si te aburre simplemente textear prueba a subir imagenes como respuestas</p>
+        </div>
+      </section>
+
+      <button onClick={googleSignIn} className="login-button">
+        Iniciar sesión
       </button>
+
+      <div className="additional-content">
+        <h3>¡Descubre más sobre Concord!</h3>
+        <p>Aquí puedes agregar más información sobre tu aplicación.</p>
+      </div>
     </main>
   );
 };
