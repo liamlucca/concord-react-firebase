@@ -9,6 +9,10 @@
   padding: 0;
 }
 
+:root {
+  background-color: #0000
+}
+
 @layer components {
   .sidebar-icon {
     @apply relative flex items-center justify-center 
