@@ -50,7 +50,7 @@ const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) 
     if (newImage && activeServer && activeServer.id !== "GlobalServer") {
       changeServerPhoto();
     }
-  }, [newImage, changeServerPhoto]);
+  }, [newImage, activeServer, changeServerPhoto]);
 
   if (!isConfigOpen || activeServer.id === "GlobalServer") return null;  
 
