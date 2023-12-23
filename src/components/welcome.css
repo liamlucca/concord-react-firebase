@@ -114,12 +114,6 @@ footer {
     padding: 10px 0;
 }
 
-.footer-creditos {
-    position: absolute;
-    bottom: 10px;
-    width: 100%; /* Opcional: Ocupa el 100% del ancho del contenedor */
-}
-
 .footer-creditos p {
     color: rgb(72, 86, 109);
 }
