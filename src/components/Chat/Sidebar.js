@@ -247,7 +247,7 @@ function ActivateGlobalServer(setActiveServer, setServerInUser, setActiveChannel
         console.error('Error al cargar el servidor global:', error);
       }
     })();
-  }, []);
+  }, []); 
 }
 
 export default SideBar;

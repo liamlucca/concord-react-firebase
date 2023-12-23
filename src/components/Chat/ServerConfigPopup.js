@@ -9,6 +9,8 @@ const storage = getStorage();
 
 const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) => {
 
+  const [newImage, setNewImage] = useState(null);
+
     /*----------------------------Logo del servidor-----------------------------------*/
     const changeServerPhoto = useCallback(async () => {
         // Verifica si se ha seleccionado una nueva imagen
@@ -40,13 +42,11 @@ const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) 
         } catch (error) {
           console.error('Error al cargar la imagen:', error);
         }
-      }, [activeServer]);  
+      }, [newImage, activeServer, setConfigOpen]);  
   /*-----------------------------------------------------------------------------------*/
   
-  const [newImage, setNewImage] = useState(null);
-
   useEffect(() => {
-    if (newImage) {
+    if (newImage && activeServer.id !== "GlobalServer") {
       changeServerPhoto();
     }
   }, [newImage, changeServerPhoto]);
