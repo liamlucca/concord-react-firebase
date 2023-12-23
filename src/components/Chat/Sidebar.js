@@ -17,7 +17,7 @@ const SideBar = ({user, setActiveServer, isConfigOpen, setActiveChannel}) => {
   const [serversList, setServersList] = useState([]);
 
   //Unir al servidor global
-  activateGlobalServer(setActiveServer, setServerInUser, setActiveChannel);
+  ActivateGlobalServer(setActiveServer, setServerInUser, setActiveChannel);
 
   //Obtener los servers
   async function getServers(){
@@ -234,7 +234,7 @@ const DefaultIcon = ({icon, text = 'tooltip 💡'}) => (
 const Divider = () => <hr className="sidebar-hr" />;
 
 
-function activateGlobalServer(setActiveServer, setServerInUser, setActiveChannel){
+function ActivateGlobalServer(setActiveServer, setServerInUser, setActiveChannel){
   const globalServerId = 'GlobalServer'; // El ID del servidor global en Firebase
   const serverGlobalRef = doc(db, 'servers', globalServerId); // Reemplaza 'servers' por tu colección
   setServerInUser(globalServerId);

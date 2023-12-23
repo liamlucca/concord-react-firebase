@@ -8,6 +8,10 @@ import Swal from 'sweetalert2';
 const storage = getStorage();
 
 const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) => {
+
+    const [newImage, setNewImage] = useState(null);
+    useEffect(()=> {changeServerPhoto()}, [newImage]);//si cambia "setNewImage" se ejecuta "changeServerPhoto"
+
     if (!isConfigOpen || activeServer.id == "GlobalServer") return null;
   
     const closeMenu = () => {
@@ -15,8 +19,6 @@ const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) 
     };
   
     /*----------------------------Logo del servidor-----------------------------------*/
-    const [newImage, setNewImage] = useState(null);
-    useEffect(()=> {changeServerPhoto()}, [newImage]);//si cambia "setNewImage" se ejecuta "changeServerPhoto"
     const changeServerPhoto = async () => {
         // Verifica si se ha seleccionado una nueva imagen
         if (!newImage) {
