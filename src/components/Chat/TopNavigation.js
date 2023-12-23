@@ -1,8 +1,4 @@
 import {
-    FaSearch,
-    FaHashtag,
-    FaRegBell,
-    FaUserCircle,
     FaMoon,
     FaSun,
     FaAngleRight,

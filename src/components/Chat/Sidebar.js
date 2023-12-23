@@ -8,8 +8,6 @@ import { doc, setDoc, getDoc, getDocs, collection, query, where } from 'firebase
 import {getStorage } from "firebase/storage" 
 import Swal from 'sweetalert2';
 
-const storage = getStorage();
-
 const SideBar = ({user, setActiveServer, isConfigOpen, setActiveChannel}) => {
 
   //Lista de servers
@@ -240,17 +238,18 @@ function ActivateGlobalServer(setActiveServer, setServerInUser, setActiveChannel
   useEffect(() => {
     (async () => {
       try {
-        const serverDoc = await getDoc(serverGlobalRef); // eslint-disable-next-line react-hooks/exhaustive-deps
+        const serverDoc = await getDoc(serverGlobalRef);
         if (serverDoc.exists()) {
           const serverData = serverDoc.data();
-          setActiveServer(serverData); // eslint-disable-next-line react-hooks/exhaustive-deps
-          setActiveChannel("general"); // eslint-disable-next-line react-hooks/exhaustive-deps
+          setActiveServer(serverData);
+          setActiveChannel("general");
         }
       } catch (error) {
         console.error('Error al cargar el servidor global:', error);
       }
     })();
-  }, []);
+  }, [serverGlobalRef, setActiveServer, setActiveChannel]); // Incluir las dependencias necesarias
+  
 }
 
 export default SideBar;

@@ -9,7 +9,8 @@ const storage = getStorage();
 
 const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) => {
     const [newImage, setNewImage] = useState(null);
-    useEffect(()=> {if (newImage) { changeServerPhoto();}}, [newImage]); // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(()=> {if (newImage) { changeServerPhoto();}
+    }, [newImage]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
     if (!isConfigOpen || activeServer.id === "GlobalServer") return null;  
 
