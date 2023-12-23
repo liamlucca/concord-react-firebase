@@ -43,6 +43,12 @@ const Welcome = () => {
         <p>así que teniamos que hacerlo más simple, menos pesado, más facil de usar y sobre todo que estuviera en un lado que no molestara </p>
         <p> ni añadiera un uso muy significante de recursos, así nació la idea de la aplicacion web Concord.</p>
       </div>
+
+      <div className="footer-creditos">
+        <h3>Créditos</h3>
+        <p>Emiliano Luchi: Página de bienvenida (esta misma).</p>
+        <p>Liam Santiago Lucca: Chat de Concord.</p> 
+      </div>
     </main>
   );
 };
