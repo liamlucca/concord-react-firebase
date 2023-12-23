@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './../styles/App.css';
 import './../styles/index.css';
 import Sidebar from './Chat/Sidebar';
@@ -8,7 +8,7 @@ import ServerConfigPopup from './Chat/ServerConfigPopup';
 
 
 import { db } from "../firebase";
-import { doc, collection, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
 //Chat
 function Chat({user}) {

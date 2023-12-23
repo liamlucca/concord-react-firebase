@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db, app } from "../../firebase";
+import { auth, db } from "../../firebase";
 import {
   doc,
   setDoc,
@@ -15,7 +15,6 @@ import {getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 
 import TopNavigation from './TopNavigation';
 import { BsPlusCircleFill } from 'react-icons/bs';
-import { act } from "react-dom/test-utils";
 
 const storage = getStorage();
 
@@ -177,7 +176,7 @@ const Message = ({ message }) => {
     <div className={`chat chat-start chat-${message.uid === user.uid ? "start" : "start"} mb-3`}>
       <div className="chat-image">
         <div className="w-10 rounded-full">
-          <img className='avatar-message' src={message.avatar} />
+          <img className='avatar-message' alt={user.displayName} src={message.avatar} />
         </div>
       </div>
       <div className="chat-header">

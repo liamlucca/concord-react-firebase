@@ -9,9 +9,9 @@ const storage = getStorage();
 
 const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) => {
     const [newImage, setNewImage] = useState(null);
-    useEffect(()=> {if (newImage) { changeServerPhoto();}}, [newImage]);//si cambia "setNewImage" se ejecuta "changeServerPhoto"
+    useEffect(()=> {if (newImage) { changeServerPhoto();}}, [newImage]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
-    if (!isConfigOpen || activeServer.id == "GlobalServer") return null;  
+    if (!isConfigOpen || activeServer.id === "GlobalServer") return null;  
 
     const closeMenu = () => {
       setConfigOpen(false);
@@ -65,7 +65,7 @@ const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) 
             confirmButtonText: 'Confirmar',
         });
     
-        if(confirmText != "QUIERO BORRAR EL SERVIDOR" && confirmText != '"QUIERO BORRAR EL SERVIDOR"') 
+        if(confirmText !== "QUIERO BORRAR EL SERVIDOR" && confirmText !== '"QUIERO BORRAR EL SERVIDOR"') 
         {return;}
 
           try {

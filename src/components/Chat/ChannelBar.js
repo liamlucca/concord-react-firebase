@@ -4,12 +4,7 @@ import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 
 import { auth, db } from "../../firebase";
 import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
-import { act } from 'react-dom/test-utils';
 import Swal from 'sweetalert2';
-
-const topics = ['tailwind-css', 'react'];
-const questions = ['jit-compilation', 'purge-files', 'dark-mode'];
-const random = ['variants', 'plugins'];
 
 const ChannelBar = ({activeServer, setActiveChannel}) => {
   //Usuario logueado
@@ -59,7 +54,7 @@ const ChannelBar = ({activeServer, setActiveChannel}) => {
 
   //Cuando el valor de "activeServer" cambie, se ejecuta getChannels()
   useEffect(()=> {
-    getChannels();
+    getChannels();  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeServer])
 
   return (
@@ -131,7 +126,7 @@ const UserBlock = ({displayName, photoURL}) => (
   <div className='user-block'>
   <div className="avatar online">
     <div className="w-24 rounded-full">
-      <img src={photoURL} />
+      <img alt={displayName} src={photoURL} />
       {/*<img src="https://preview.redd.it/ogiglyr165p91.png?auto=webp&s=10efe64832620088452adccd502fc04b3eaac3e4" />*/}
     </div>
   </div>

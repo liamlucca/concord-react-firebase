@@ -33,7 +33,7 @@ const TopNavigation = ({activeServer, channelName, setConfigOpen}) => {
 const ServerConfigIcon = () => <span onClick={openMenu}><RiSettings5Fill size='24' className='top-navigation-icon'/></span>
 
 const openMenu = () => {
-  if(activeServer.id != "GlobalServer") setConfigOpen(true);
+  if(activeServer.id !== "GlobalServer") setConfigOpen(true);
 
 };
 
@@ -64,7 +64,7 @@ function getServerInfo(){
       <label tabIndex={0} className=""> {/*esto antes era: sm:hidden */}
         <LeftMenuIcon />
       </label>
-      <a className="btn btn-ghost normal-case text-xl"><Title text={title} /></a>
+      <p className="btn btn-ghost normal-case text-xl"><Title text={title} /></p>
       <div className="dropdown p-0 flex flex-row-reverse mr-5">
         <label tabIndex={0} className="btn btn-ghost lg:hidden">
           <RightMenuIcon />
@@ -105,13 +105,6 @@ const ThemeIcon = () => {
     </span>
   );
 };
-  
-const Search = () => (
-  <div className='search'>
-    <input className='search-input' type='text' placeholder='Search...' />
-    <FaSearch size='18' className='text-secondary my-auto' />
-  </div>
-);
 
 const LeftMenuIcon = () => {
     const [isHide, setIsHide] = useState(true);    
@@ -152,12 +145,7 @@ const LeftMenuIcon = () => {
 }
 
 const RightMenuIcon = () => <span><FaAlignRight size='24' className='top-navigation-icon'/></span>
-const BellIcon = () => <span><FaRegBell size='24' className='top-navigation-icon' /></span>;
-const UserCircle = () => <span><FaUserCircle size='24' className='top-navigation-icon' /></span>;
-const HashtagIcon = () => <span><FaHashtag size='20' className='top-navigation-icon' /></span>;
 const Title = ({text}) => <h5 className='title-text'>{text}</h5>;
-
-
 
 export default TopNavigation;
   

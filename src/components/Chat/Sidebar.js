@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { BsPlus, BsWechat, BsGearFill, BsDatabase } from 'react-icons/bs';
-import { FaFire, FaPoo } from 'react-icons/fa';
+import { BsPlus, BsWechat } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi'
 
 import { db } from "../../firebase";
 
 import { doc, setDoc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
-import {getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage" 
+import {getStorage } from "firebase/storage" 
 import Swal from 'sweetalert2';
 
 const storage = getStorage();
@@ -43,12 +42,12 @@ const SideBar = ({user, setActiveServer, isConfigOpen, setActiveChannel}) => {
 
   //Llamamos a la función con useEffect 
   useEffect(()=> {
-    getServers();
+    getServers(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //Actualizar los servers si se cierra la ventana de configuracion
   useEffect(()=> {
-    getServers();
+    getServers(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConfigOpen]);
 
   //CREAR UN SERVIDOR (botón)
@@ -210,7 +209,7 @@ const ServerIcon = ({setActiveServer, serverData}) => (
   <div onClick={() => {setActiveServer(serverData)}} className="sidebar-icon group min-h-12">  {/*---Seleccionar canal---*/}
 
       {serverData.iconUrl ? (
-        <img src={serverData.iconUrl } className='sidebar-icon aspect-square'/> 
+        <img alt={serverData.name} src={serverData.iconUrl } className='sidebar-icon aspect-square'/> 
       ) : (
         serverData.name[0].toUpperCase()
       )}
@@ -241,11 +240,11 @@ function ActivateGlobalServer(setActiveServer, setServerInUser, setActiveChannel
   useEffect(() => {
     (async () => {
       try {
-        const serverDoc = await getDoc(serverGlobalRef);
+        const serverDoc = await getDoc(serverGlobalRef); // eslint-disable-next-line react-hooks/exhaustive-deps
         if (serverDoc.exists()) {
           const serverData = serverDoc.data();
-          setActiveServer(serverData); // Establece el servidor global como activo
-          setActiveChannel("general");
+          setActiveServer(serverData); // eslint-disable-next-line react-hooks/exhaustive-deps
+          setActiveChannel("general"); // eslint-disable-next-line react-hooks/exhaustive-deps
         }
       } catch (error) {
         console.error('Error al cargar el servidor global:', error);
