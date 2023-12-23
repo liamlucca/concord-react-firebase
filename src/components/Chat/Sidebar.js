@@ -247,6 +247,7 @@ function ActivateGlobalServer(setActiveServer, setServerInUser, setActiveChannel
         console.error('Error al cargar el servidor global:', error);
       }
     })();
+// eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 }
 

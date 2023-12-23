@@ -42,11 +42,12 @@ const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) 
         } catch (error) {
           console.error('Error al cargar la imagen:', error);
         }
-      }, [newImage, activeServer, setConfigOpen]);  
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [newImage]);  
   /*-----------------------------------------------------------------------------------*/
-  
+
   useEffect(() => {
-    if (newImage && activeServer.id !== "GlobalServer") {
+    if (newImage && activeServer && activeServer.id !== "GlobalServer") {
       changeServerPhoto();
     }
   }, [newImage, changeServerPhoto]);
