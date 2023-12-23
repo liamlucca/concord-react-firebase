@@ -5,7 +5,6 @@ import { HiUserGroup } from 'react-icons/hi'
 import { db } from "../../firebase";
 
 import { doc, setDoc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
-import {getStorage } from "firebase/storage" 
 import Swal from 'sweetalert2';
 
 const SideBar = ({user, setActiveServer, isConfigOpen, setActiveChannel}) => {
