@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { db } from "../../firebase";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'; 
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -8,23 +8,9 @@ import Swal from 'sweetalert2';
 const storage = getStorage();
 
 const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) => {
-    
-  const [newImage, setNewImage] = useState(null);
 
-    useEffect(() => {
-      if (newImage) {
-        changeServerPhoto();
-      }
-    }, [newImage, changeServerPhoto]);
-
-    if (!isConfigOpen || activeServer.id === "GlobalServer") return null;  
-
-    const closeMenu = () => {
-      setConfigOpen(false);
-    };
-  
     /*----------------------------Logo del servidor-----------------------------------*/
-    const changeServerPhoto = async () => {
+    const changeServerPhoto = useCallback(async () => {
         // Verifica si se ha seleccionado una nueva imagen
         if (!newImage) {
           //alert('Selecciona una nueva imagen para el servidor.');
@@ -54,7 +40,23 @@ const ServerConfigPopup = ({ activeServer, isConfigOpen, setConfigOpen, user }) 
         } catch (error) {
           console.error('Error al cargar la imagen:', error);
         }
-      };  
+      }, [activeServer]);  
+  /*-----------------------------------------------------------------------------------*/
+  
+  const [newImage, setNewImage] = useState(null);
+
+  useEffect(() => {
+    if (newImage) {
+      changeServerPhoto();
+    }
+  }, [newImage, changeServerPhoto]);
+
+  if (!isConfigOpen || activeServer.id === "GlobalServer") return null;  
+
+  const closeMenu = () => {
+    setConfigOpen(false);
+  };
+
     /*----------------------------Borrar el servidor-----------------------------------*/
     const deleteServer = async () => {
         

@@ -234,20 +234,18 @@ function ActivateGlobalServer(setActiveServer, setServerInUser, setActiveChannel
   const globalServerId = 'GlobalServer'; // El ID del servidor global en Firebase
   const serverGlobalRef = doc(db, 'servers', globalServerId); // Reemplaza 'servers' por tu colección
   setServerInUser(globalServerId);
-  useEffect(() => {
-    (async () => {
-      try {
-        const serverDoc = await getDoc(serverGlobalRef);
-        if (serverDoc.exists()) {
-          const serverData = serverDoc.data();
-          setActiveServer(serverData);
-          setActiveChannel("general");
-        }
-      } catch (error) {
-        console.error('Error al cargar el servidor global:', error);
+  (async () => {
+    try {
+      const serverDoc = await getDoc(serverGlobalRef);
+      if (serverDoc.exists()) {
+        const serverData = serverDoc.data();
+        setActiveServer(serverData);
+        setActiveChannel("general");
       }
-    })();
-  }, [serverGlobalRef, setActiveServer, setActiveChannel]); // Incluir las dependencias necesarias
+    } catch (error) {
+      console.error('Error al cargar el servidor global:', error);
+    }
+  });
   
 }
 
